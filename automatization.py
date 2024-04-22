@@ -10,16 +10,10 @@ args = parse_opt()
 
 def detection(image_path, directory, filename):
     # Classificar e detetar tigela na imagem
-    predicted_class = detection_function(args, image_path)
-    print(f"Predicted class for {image_path}: {predicted_class}")
-
-    # Mover a imagem para outra pasta
-    #done_folder = os.path.join(directory, "Tigela")
-    #shutil.move(image_path, os.path.join(done_folder, filename))
+    detection_function(args, image_path)
 
     #Eliminar as imagens classificadas
     os.remove(image_path)
-
 
 
 # Função para processar todas as imagens no diretório

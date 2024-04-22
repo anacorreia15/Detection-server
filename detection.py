@@ -248,15 +248,11 @@ def detection_function(args, image_path):
 
     print('TEST PREDICTIONS COMPLETE')
     cv2.destroyAllWindows()
-
-    if scores[0] >= detection_threshold:
-        return pred_classes[0]
-    return None
+    
 
 # if __name__ == '__main__':
 #     args = parse_opt()
 #     detection_function(parse_opt(), './images/teste2.jpg')
-
 
 
 "python .\inference.py --input .\data\tigela.jpg --weights .\data\tigela_best.pth"

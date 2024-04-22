@@ -1,9 +1,17 @@
 # Ignorar o diretório de ambiente virtual (venv)
 venv/
 
+# Ignorar o diretório outputs
+outputs/
+
+# Ignorar o diretório images
+images/
+
 # Ignorar o diretório de cache Python
 __pycache__/
 models/__pycache__/
 utils/__pycache__/
+
+#ignorar os modelos treinados
 *.pth
 
