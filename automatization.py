@@ -3,7 +3,8 @@ import os
 import shutil
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-from detection import detection_function, parse_opt
+#from detection import detection_function, parse_opt
+from detection_cut import detection_function, parse_opt
 
 args = parse_opt()
 #done_folder = './images/Done'

@@ -3,6 +3,7 @@ venv/
 
 # Ignorar o diretório outputs
 outputs/
+cut-outputs/
 
 # Ignorar o diretório images
 images/
