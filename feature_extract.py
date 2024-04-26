@@ -58,7 +58,7 @@ def calculate_radius(image):
     
         #show_image(image)
 
-    return biggest_radius, smallest_radius
+    return biggest_radius, smallest_radius, comeu_tudo
 
 #image_path = "soup.png"
 #calculate_radius = calculate_radius(image_path)

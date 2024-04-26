@@ -16,6 +16,8 @@ from utils.general import set_infer_dir
 from utils.transforms import infer_transforms, resize
 from utils.logging import log_to_json
 from feature_extract import calcular_volume_sopa, calculate_radius
+import datetime
+import db_handler
   
 def collect_all_images(dir_test):
     """
@@ -114,23 +116,31 @@ def parse_opt():
     args = vars(parser.parse_args())
     return args
 
-def crop_images(image, boxes, image_name):
+def extract_features(image, boxes, image_name):
     """
-    Crop the image based on the bounding boxes and save cropped images.
+    Crop the image based on the bounding boxes and extract features to calculate the volume of the soup.
 
     :param image: Original image.
     :param boxes: Bounding boxes detected.
     :param image_name: Name of the original image.
+
+    :return: volume of the soup and the date
     """
+
+    # Obter a data atual
+    data_atual = datetime.date.today().strftime("%Y-%m-%d")
+
     for i, box in enumerate(boxes):
         x1, y1, x2, y2 = box
         cropped_image = image[y1:y2, x1:x2]
         #print(f"Cropped image {i}: {cropped_image.shape}")
 
         # Chamar a função calculate_radius para a imagem cortada
-        biggest_radius, smallest_radius = calculate_radius(cropped_image)
+        biggest_radius, smallest_radius, taca_vazia = calculate_radius(cropped_image)
         volume = calcular_volume_sopa(biggest_radius, smallest_radius)
         print(f"Volume da sopa na imagem {image_name}_{i}.jpg: {volume:.2f} litros")
+    
+    return volume, data_atual, taca_vazia
 
 def detection_function(args, image_path):
     # For same annotation colors each time.
@@ -260,11 +270,20 @@ def detection_function(args, image_path):
             if scores[0] >= detection_threshold:
                 cv2.imwrite(f"{OUT_DIR}/{image_name}.jpg", orig_image)
                 print(f"Image {i+1} done...")
-                # Crop the image based on the bounding boxes and save cropped images
-                crop_images(orig_image, draw_boxes, f"{image_name}_cropped")
+                # Crop the image based on the bounding boxes and extract features to calculate the volume of the soup.
+                volume, data_atual, taca_vazia = extract_features(orig_image, draw_boxes, f"{image_name}_cropped")
                 
             else:
                 print(f"Image {i+1} discarded due to low score.")
+
+    #inserir os dados na tabela refeicao
+    conection = db_handler.conect_bd()
+    if conection is not None:
+        if taca_vazia:
+            volume = 0
+        db_handler.insert_table(conection,data_atual, volume)     
+    else:
+        print("Não foi possível estabelecer conexão à base de dados.")
 
     print('TEST PREDICTIONS COMPLETE')
     print('-'*50)
