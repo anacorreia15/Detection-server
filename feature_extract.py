@@ -3,10 +3,10 @@ import numpy as np
 from copy import deepcopy
 import math
 
-def show_image(img):
-    cv2.imshow("Foto", img)
-    #cv2.waitKey(0)
-    cv2.destroyAllWindows()
+# def show_image(img):
+#     cv2.imshow("Foto", img)
+#     #cv2.waitKey(0)
+#     cv2.destroyAllWindows()
 
 def calculate_radius(image):
     comeu_tudo = False
@@ -24,7 +24,7 @@ def calculate_radius(image):
     biggest_radius = -1
     for i in circles[0, :][:1]:
         radius = int(i[2])
-        print(radius)
+        print("Raio maior (Tigela): ", radius) #raio da tigela
         biggest_radius = radius
 
         cv2.circle(image, (int(i[0]), int(i[1])), radius, color=(255,0,0), thickness=3)
@@ -48,11 +48,11 @@ def calculate_radius(image):
     smallest_radius = -1
     if circles is None:
         comeu_tudo = True
-        print("COMEU TUDO!!!!!!!!")
+        print("COMEU TUDO!!!")
     else:
         for i in circles[0, :][:1]:
             radius = int(i[2])
-            print(radius) #raio da sopa
+            print("Raio Menor (Sopa): ",radius) #raio da sopa
             smallest_radius = radius
             cv2.circle(image, (int(i[0]), int(i[1])), radius, color=(0,0,255), thickness=3)
     
@@ -60,8 +60,6 @@ def calculate_radius(image):
 
     return biggest_radius, smallest_radius
 
-#image_path = "outrasopa.png"
-#image_path = "bowl_of_soup.png"
 #image_path = "soup.png"
 #calculate_radius = calculate_radius(image_path)
 
@@ -102,6 +100,5 @@ def calcular_volume_sopa(biggest_radius_pixels, smallest_radius_pixels):
 
 # Testar a função com valores de exemplo
 #biggest_radius_pixels, smallest_radius_pixels = calculate_radius
-
 #volume = calcular_volume_sopa(biggest_radius_pixels, smallest_radius_pixels)
 #print(f"Volume da sopa: {volume:.2f} litros")

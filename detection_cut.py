@@ -114,24 +114,23 @@ def parse_opt():
     args = vars(parser.parse_args())
     return args
 
-def crop_images(image, boxes, output_dir, image_name):
+def crop_images(image, boxes, image_name):
     """
     Crop the image based on the bounding boxes and save cropped images.
 
     :param image: Original image.
     :param boxes: Bounding boxes detected.
-    :param output_dir: Directory to save the cropped images.
     :param image_name: Name of the original image.
     """
     for i, box in enumerate(boxes):
         x1, y1, x2, y2 = box
         cropped_image = image[y1:y2, x1:x2]
-        print(f"Cropped image {i}: {cropped_image.shape}")
+        #print(f"Cropped image {i}: {cropped_image.shape}")
 
         # Chamar a função calculate_radius para a imagem cortada
         biggest_radius, smallest_radius = calculate_radius(cropped_image)
         volume = calcular_volume_sopa(biggest_radius, smallest_radius)
-        print(f"Volume da sopa na imagem {image_name}_cropped_{i}.jpg: {volume:.2f} litros")
+        print(f"Volume da sopa na imagem {image_name}_{i}.jpg: {volume:.2f} litros")
 
 def detection_function(args, image_path):
     # For same annotation colors each time.
@@ -148,7 +147,6 @@ def detection_function(args, image_path):
     DEVICE = args['device']
     #OUT_DIR = set_infer_dir()
     OUT_DIR = './outputs'
-    OUTPUT_DIR = './cut-outputs'
 
     # Load the pretrained model
     if args['weights'] is None:
@@ -262,21 +260,12 @@ def detection_function(args, image_path):
             if scores[0] >= detection_threshold:
                 cv2.imwrite(f"{OUT_DIR}/{image_name}.jpg", orig_image)
                 print(f"Image {i+1} done...")
-                print('-'*50)
                 # Crop the image based on the bounding boxes and save cropped images
-                crop_images(orig_image, draw_boxes, OUTPUT_DIR, f"{image_name}_cropped")
+                crop_images(orig_image, draw_boxes, f"{image_name}_cropped")
                 
             else:
                 print(f"Image {i+1} discarded due to low score.")
-                print('-'*50)
 
     print('TEST PREDICTIONS COMPLETE')
+    print('-'*50)
     cv2.destroyAllWindows()
-    
-
-# if __name__ == '__main__':
-#     args = parse_opt()
-#     detection_function(parse_opt(), './images/teste2.jpg')
-
-
-"python .\inference.py --input .\data\tigela.jpg --weights .\data\tigela_best.pth"

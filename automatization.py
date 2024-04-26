@@ -7,7 +7,6 @@ from watchdog.events import FileSystemEventHandler
 from detection_cut import detection_function, parse_opt
 
 args = parse_opt()
-#done_folder = './images/Done'
 
 def detection(image_path, directory, filename):
     # Classificar e detetar tigela na imagem
@@ -29,7 +28,7 @@ def process_existing_images(directory):
 
             detection(image_path, directory, filename)
 
-# Diretório que você quer monitorar
+# Diretório que se quer monitorar
 directory_to_watch = os.path.abspath("./images")
 
 # Processar imagens existentes antes de iniciar a observação do Watchdog
