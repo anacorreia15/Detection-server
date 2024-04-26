@@ -13,8 +13,12 @@ def detection(image_path, directory, filename):
     # Classificar e detetar tigela na imagem
     detection_function(args, image_path)
 
-    #Eliminar as imagens classificadas
-    os.remove(image_path)
+    # Tentar excluir a imagem após a detecção
+    try:
+        os.remove(image_path)
+        print(f"Image {filename} deleted after detection.")
+    except Exception as e:
+        print(f"Failed to delete image {filename}: {e}")
 
 
 # Função para processar todas as imagens no diretório

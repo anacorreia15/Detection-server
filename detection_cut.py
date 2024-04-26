@@ -15,6 +15,7 @@ from utils.annotations import (
 from utils.general import set_infer_dir
 from utils.transforms import infer_transforms, resize
 from utils.logging import log_to_json
+from feature_extract import calcular_volume_sopa, calculate_radius
   
 def collect_all_images(dir_test):
     """
@@ -55,7 +56,7 @@ def parse_opt():
     )
     parser.add_argument(
         '-th', '--threshold', 
-        default=0.88, 
+        default=0.80, 
         type=float,
         help='detection threshold'
     )
@@ -125,7 +126,12 @@ def crop_images(image, boxes, output_dir, image_name):
     for i, box in enumerate(boxes):
         x1, y1, x2, y2 = box
         cropped_image = image[y1:y2, x1:x2]
-        cv2.imwrite(os.path.join(output_dir, f"{image_name}_cropped_{i}.jpg"), cropped_image)
+        print(f"Cropped image {i}: {cropped_image.shape}")
+
+        # Chamar a função calculate_radius para a imagem cortada
+        biggest_radius, smallest_radius = calculate_radius(cropped_image)
+        volume = calcular_volume_sopa(biggest_radius, smallest_radius)
+        print(f"Volume da sopa na imagem {image_name}_cropped_{i}.jpg: {volume:.2f} litros")
 
 def detection_function(args, image_path):
     # For same annotation colors each time.
@@ -259,6 +265,7 @@ def detection_function(args, image_path):
                 print('-'*50)
                 # Crop the image based on the bounding boxes and save cropped images
                 crop_images(orig_image, draw_boxes, OUTPUT_DIR, f"{image_name}_cropped")
+                
             else:
                 print(f"Image {i+1} discarded due to low score.")
                 print('-'*50)
