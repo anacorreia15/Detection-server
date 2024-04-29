@@ -13,19 +13,19 @@ def conect_bd():
     try:
         # Conectar à base de dados
         conexao = mysql.connector.connect(**config)
-        print("Conexão bem sucedida!")
+        print("Conexão à base de dados bem sucedida!")
         return conexao
     except mysql.connector.Error as erro:
         print(f"Erro ao conectar ao banco de dados: {erro}")
         return None
     
-def insert_table(conexao, data_atual, volume_sopa_desperdicado):
+def insert_table(conexao, data_atual, volume_sopa_desperdicado, tigela):
     try:
         cursor = conexao.cursor()
         # Comando SQL para inserir dados na tabela refeicao
-        sql_insert = "INSERT INTO refeicao (data, volume_sopa_desperdicado) VALUES (%s, %s)"
+        sql_insert = "INSERT INTO refeicao (data, volume_sopa_desperdicado, tigela) VALUES (%s, %s, %s)"
         # Dados a serem inseridos
-        dados = (data_atual, volume_sopa_desperdicado)
+        dados = (data_atual, volume_sopa_desperdicado, tigela)
         # Executar o comando SQL
         cursor.execute(sql_insert, dados)
         # Confirmar a transação

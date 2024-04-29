@@ -142,6 +142,9 @@ def extract_features(image, boxes, image_name):
     
     return volume, data_atual, taca_vazia
 
+#Conexao à base de dados
+conection = db_handler.conect_bd()
+
 def detection_function(args, image_path):
     # For same annotation colors each time.
     np.random.seed(42)
@@ -208,6 +211,10 @@ def detection_function(args, image_path):
     frame_count = 0
     # To keep adding the frames' FPS.
     total_fps = 0
+
+    # Definir inicialmente s_tigela como True
+    s_tigela = True
+
     for i in range(len(test_images)):
         # Get the image file name for saving output later on.
         image_name = test_images[i].split(os.path.sep)[-1].split('.')[0]
@@ -267,21 +274,29 @@ def detection_function(args, image_path):
                 plt.axis('off')
                 plt.show()
             
+
             if scores[0] >= detection_threshold:
                 cv2.imwrite(f"{OUT_DIR}/{image_name}.jpg", orig_image)
                 print(f"Image {i+1} done...")
                 # Crop the image based on the bounding boxes and extract features to calculate the volume of the soup.
                 volume, data_atual, taca_vazia = extract_features(orig_image, draw_boxes, f"{image_name}_cropped")
+                s_tigela = False
                 
             else:
+                #s_tigela = True
                 print(f"Image {i+1} discarded due to low score.")
 
     #inserir os dados na tabela refeicao
-    conection = db_handler.conect_bd()
     if conection is not None:
-        if taca_vazia:
+        if s_tigela == False:
+            if taca_vazia:
+                volume = 0
+            db_handler.insert_table(conection,data_atual, volume, 1)
+        else:
             volume = 0
-        db_handler.insert_table(conection,data_atual, volume)     
+            # Obter a data atual
+            data_atual = datetime.date.today().strftime("%Y-%m-%d")
+            db_handler.insert_table(conection,data_atual, volume, 0)       
     else:
         print("Não foi possível estabelecer conexão à base de dados.")
 
